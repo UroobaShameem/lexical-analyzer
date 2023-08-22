@@ -1,22 +1,30 @@
-import re                                 
+import re      
+from func import *                          
 
-tokens = []                              
+# array to store token values
+tokens = []         
+
+# read input from output.txt where words stored  
 with open("output.txt", "r") as file:
     content = file.readlines()
 
-values = []
+#get only first part from each line
+value_p = {}
 for line in content:
+    #separate on basis of ,
     parts = line.strip().split(',')
-    if parts:
+    if len(parts) >=2:
+        Line_no= parts[1].strip()
         value= parts[0].strip()
-        values.append(value)
-
+        value_p[value]= Line_no
+        #store line_no
+        
 # Loop through each source code word
-for word in values:
+for word in value_p.keys():
     
     # This will check if a token has datatype decleration
-    if word in ['str', 'int', 'bool']: 
-        tokens.append(['DATATYPE', word])
+    if isDataType(word): 
+        tokens.append(['DATATYPE', word, Line_no])
         
     # This will look for an identifier which would be just a word
     elif re.match("[a-z]", word) or re.match("[A-Z]", word):
