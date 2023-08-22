@@ -1,6 +1,7 @@
 
-def word_break(source_code):
+def word_break(source_code,Line):
     tokens = []
+    Line = 1
     i = 0
     while i < len(source_code):
         char = source_code[i]
@@ -12,7 +13,7 @@ def word_break(source_code):
             while i < len(source_code) and (source_code[i].isalnum() or source_code[i] == "_"):
                 token += source_code[i]
                 i += 1
-            tokens.append(token)
+            tokens.append((token,Line))
 
         elif char.isdigit():
             # Number
@@ -21,7 +22,7 @@ def word_break(source_code):
             while i < len(source_code) and (source_code[i].isdigit() or source_code[i] == "."):
                 token += source_code[i]
                 i += 1
-            tokens.append(token)
+            tokens.append((token,Line))
 
         elif char in "+-*/&|:,'":
             # Operators
@@ -30,7 +31,7 @@ def word_break(source_code):
             if i < len(source_code) and source_code[i] == char:
                 token += char
                 i += 1
-            tokens.append(token)
+            tokens.append((token,Line))
 
         elif char == "=":
             # Check for ==
@@ -39,10 +40,9 @@ def word_break(source_code):
             if i < len(source_code) and source_code[i] == "=":
                 token += char
                 i += 1
-                tokens.append(token)
+                tokens.append((token,Line))
             else:
-                tokens.append(char)
-
+                tokens.append((token,Line))
         elif char == "+":
             # Check for ++ and +=
             token = char
@@ -50,9 +50,9 @@ def word_break(source_code):
             if i < len(source_code) and source_code[i] == "+" or source_code[i] == "=":
                 token += char
                 i += 1
-                tokens.append(token)
+                tokens.append((token,Line))
             else:
-                tokens.append(char)
+                tokens.append((token,Line))
 
         elif char in "(){}<>!":
             # Check for various operators
@@ -61,7 +61,7 @@ def word_break(source_code):
             if i < len(source_code) and source_code[i] == "=":
                 token += source_code[i]
                 i += 1
-            tokens.append(token)
+            tokens.append((token,Line))
 
         elif char.isspace():
             # Whitespace
@@ -69,17 +69,18 @@ def word_break(source_code):
 
         elif char == "\n":
             # Newline
-            tokens.append(char)
+            tokens.append((token,Line))
             i += 1
-
+            Line +=1
+ 
         elif char == "\r":
             # Carriage return
-            tokens.append(char)
+            tokens.append((token,Line))
             i += 1
 
         elif char == "\t":
             # Tab
-            tokens.append(char)
+            tokens.append((token,Line))
             i += 1
 
         else:

@@ -7,25 +7,14 @@ def input():
     return source_code
 
 def output():
-    tokens = word_break(input())
+    tokens = word_break(input(),0)
     with open("output.txt", "a") as output_file:
-        for token_value in tokens:
-            output_file.write(f"Token Value: {token_value}\n")
+        for token_value,Line in tokens:
+            output_file.write(f"{token_value}, {Line}\n")
 
 def main():
-    input_code = input()
-
-    try:
-        tokens = word_break(input_code)
-    except ValueError as e:
-        print(e)
-        return
-
+    input()
     output()
-
-    # Store the tokens in an array
-    token_array = tokens
-    print("Token Array:", token_array)
 
 if __name__ == "__main__":
     main()

@@ -1,2 +1,5 @@
-Token Value: int
-Token Value: a
+int , 1
+a , 1
+
+int, 1
+a, 1
