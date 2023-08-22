@@ -1,6 +1,3 @@
-import re
-
-variable_pattern = r'[a-zA-Z][a-zA-Z0-9_]*[a-zA-Z0-9]*'
 
 def word_break(source_code):
     tokens = []
@@ -8,19 +5,14 @@ def word_break(source_code):
     while i < len(source_code):
         char = source_code[i]
 
-        if i == 0 and not re.match(variable_pattern, source_code[i:]):
-            raise ValueError(f"Invalid variable name")
-
-        if re.match(variable_pattern, source_code[i:]):
-            match = re.match(variable_pattern, source_code[i:])
-            if match is None:
-                tokens.append(None)
+        if char.isalpha() or char == "_":
+            # Identifier
+            token = char
+            i += 1
+            while i < len(source_code) and (source_code[i].isalnum() or source_code[i] == "_"):
+                token += source_code[i]
                 i += 1
-                continue
-            else:
-                token_value = match.group(0)
-                tokens.append(token_value)
-                i += len(token_value)
+            tokens.append(token)
 
         elif char.isdigit():
             # Number
@@ -45,6 +37,17 @@ def word_break(source_code):
             token = char
             i += 1
             if i < len(source_code) and source_code[i] == "=":
+                token += char
+                i += 1
+                tokens.append(token)
+            else:
+                tokens.append(char)
+
+        elif char == "+":
+            # Check for ++ and +=
+            token = char
+            i += 1
+            if i < len(source_code) and source_code[i] == "+" or source_code[i] == "=":
                 token += char
                 i += 1
                 tokens.append(token)
@@ -84,22 +87,4 @@ def word_break(source_code):
 
     return tokens
 
-def read_input():
-    source_code = input("Enter your Python source code:\n")
-    return source_code
 
-def main():
-    input_code = read_input()
-
-    try:
-        tokens = word_break(input_code)
-    except ValueError as e:
-        print(e)
-        return
-
-    print("Tokens:")
-    for token_value in tokens:
-        print(f"{token_value}")
-
-if __name__ == "__main__":
-    main()
