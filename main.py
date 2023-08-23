@@ -1,4 +1,5 @@
 from word_break import word_break
+from tokenization import *
 
 
 def input():
@@ -8,13 +9,14 @@ def input():
 
 def output():
     tokens = word_break(input(),0)
-    with open("output.txt", "a") as output_file:
+    with open("words.txt", "a") as output_file:
         for token_value,Line in tokens:
             output_file.write(f"{token_value}, {Line}\n")
 
 def main():
     input()
     output()
+    write_output()
 
 if __name__ == "__main__":
     main()
