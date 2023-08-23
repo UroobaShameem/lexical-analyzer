@@ -1,4 +1,2 @@
-[{, {, 2]
-[Float, 0.6, 1]
 [DataType, int, 1]
 [ID, a, 1]

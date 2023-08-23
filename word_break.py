@@ -82,6 +82,14 @@ def word_break(source_code,Line):
             # Tab
             tokens.append((token,Line))
             i += 1
+        
+        elif char == "#":
+            # Single-line comment
+            i += 1
+            while i < len(source_code) and source_code[i] != "\n":
+                i += 1
+            # Move to the next line
+            Line += 1
 
         else:
             raise ValueError(f"Invalid character: {char}")

@@ -50,6 +50,10 @@ for word, Line_no in list.items():
         classification = isPunctuator(word)
         tokens.append([classification, word, Line_no])
 
+    else:
+        tokens.append(['Invalid Lexeme', word, Line_no])
+
+
 def write_output():
     with open("output.txt", "w") as file:
         for token in tokens:
