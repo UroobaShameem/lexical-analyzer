@@ -1,7 +1,5 @@
 import re
 
-import re
-
 def isID(x):
     ID = re.match(r'[a-zA-Z_]\w*', x)
     if ID:

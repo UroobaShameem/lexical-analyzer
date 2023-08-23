@@ -8,10 +8,18 @@ def input():
     return source_code
 
 def output():
-    tokens = word_break(input(),0)
+    code= input()
+    tokens = word_break(code)
     with open("words.txt", "a") as output_file:
-        for token_value,Line in tokens:
-            output_file.write(f"{token_value}, {Line}\n")
+        for token_value,Line_no in tokens:
+            output_file.write(f"{token_value}, {Line_no}\n")
+
+def write_output():
+    LA = tokenize(output())
+    with open("output.txt", "w") as file:
+        for token in LA:
+            file.write(f"[{token[0]}, {token[1]}, {token[2]}]\n")
+
 
 def main():
     input()

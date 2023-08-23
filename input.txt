@@ -1,1 +1,13 @@
-int a
+var int a=7.8
+if{x='a',r>=} #comment
+4r_ fun()
+back
+
+    bool true 7.1a
+
+av
+89
+abc.xy
+12.5"compiler"
+'r'
+
