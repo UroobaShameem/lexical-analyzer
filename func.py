@@ -32,7 +32,7 @@ def isKeyword(x):
     return None
 
 def isChar(x):
-    char = re.match(r'\'[a-zA-Z0-9]\'', x)
+    char = re.match(r"'(?:\\.|[^\\'])'", x)
     if char:
         return x
     return None
