@@ -25,6 +25,13 @@ def isKeyword(x):
         'self': 'self',
         'enter': 'EP',
         'print': 'EP',
+        'del' : 'del',
+        'super': 'super',
+        'add': 'add',
+        'remove': 'remove',
+        'virtual': 'virtual',
+        'override': 'override',
+        'static': 'static',
     }
     lower_x = x.lower()
     if lower_x in keyword_list:

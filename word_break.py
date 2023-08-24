@@ -25,8 +25,8 @@ def word_break(source_code):
             tokens.append((token, Line))
 
         elif char == "'":
-            # Single-character or sequence enclosed in single quotes
-            match = re.match(r"'(?:[^'\\]|\\.)+'", source_code[i:])
+            # Single-character enclosed in single quotes
+            match = re.match(r"'(?:[^'\\]|\\.)'", source_code[i:])
             if match:
                 token = match.group(0)
                 tokens.append((token, Line))
@@ -34,7 +34,6 @@ def word_break(source_code):
             else: 
                 tokens.append((char, Line))
                 i += 1
-
 
         elif char == '"':
             # String enclosed in double quotes

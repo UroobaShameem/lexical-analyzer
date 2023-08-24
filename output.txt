@@ -1,4 +1,0 @@
-[ID, bnm, 1]
-[Char, 'c', 2]
-[Invalid Lexeme, 'abc', 3]
-[Char, '\n', 4]
