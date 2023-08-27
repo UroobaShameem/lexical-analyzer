@@ -15,14 +15,21 @@ def word_break(source_code):
             if char == "\n":
                 Line += 1
 
-        elif char in "+-*/&|:,(){}<>!;=":
+        elif char in "+-*/<>!=":
             # Operators
             token = char
             i += 1
             if i < len(source_code) and source_code[i] == "=":
                 token += source_code[i]
                 i += 1
+            elif i < len(source_code) and char in "+-" and source_code[i] == char:
+                token += char
+                i += 1
             tokens.append((token, Line))
+
+        elif char in "&|:,(){};":
+            i += 1
+            tokens.append((char, Line))
 
         elif char == "'":
             # Single-character enclosed in single quotes

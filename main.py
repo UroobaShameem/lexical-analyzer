@@ -15,7 +15,7 @@ def main():
     source_code = read_input()
     tokens = word_break(source_code)
 
-    with open("words.txt", "a") as output_file:
+    with open("words.txt", "w") as output_file:
         for token_value, Line_no in tokens:
             output_file.write(f"{token_value}, {Line_no}\n")
 
