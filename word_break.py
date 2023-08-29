@@ -73,8 +73,6 @@ def word_break(source_code):
                     i += 1
             tokens.append((token, Line))
 
-
-
         elif char == ".":
             # Handling dot as part of a number or a separate token
             if i + 1 < len(source_code) and (source_code[i + 1].isdigit() or source_code[i + 1].isalpha()):
@@ -95,6 +93,18 @@ def word_break(source_code):
                 i += 1
             # Move to the next line
             #Line += 1
+        
+        elif char == "@" and i + 1 < len(source_code) and source_code[i + 1] == "@":
+            # Multiline comment using "@@" at start and end
+            i += 2
+            while i < len(source_code) and not (source_code[i] == "@" and i + 1 < len(source_code) and source_code[i + 1] == "@"):
+                if source_code[i] == "\n":
+                    Line += 1
+                i += 1
+            if i < len(source_code):
+                i += 2  # Skip over "@@"
+            else:
+                i += 1  # Skip over "@" to handle incomplete comment
 
         elif char.isspace():
             # Whitespace
