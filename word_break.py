@@ -32,29 +32,47 @@ def word_break(source_code):
             tokens.append((char, Line))
 
         elif char == "'":
-            # Single-character enclosed in single quotes
-            match = re.match(r"'(?:[^'\\]|\\.)'", source_code[i:])
-            if match:
-                token = match.group(0)
-                tokens.append((token, Line))
-                i += len(token)
-            else: 
-                tokens.append((char, Line))
+            # Single-character or sequence enclosed in single quotes
+            i += 1
+            token = char
+
+            if i < len(source_code) and source_code[i] == "\\":
+                token += source_code[i]
                 i += 1
+                if i < len(source_code):
+                    token += source_code[i]
+                    i += 1
+                    if token == "n":
+                        token = "\n"  # Handle \n escape sequence
+            else:
+                if i < len(source_code):
+                    token += source_code[i]
+                    i += 1
+            
+            if i < len(source_code) and source_code[i] == "'":
+                token += source_code[i]
+                tokens.append((token, Line))
+                i += 1
+            else:
+                tokens.append((token, Line))
 
         elif char == '"':
             # String enclosed in double quotes
             i += 1
             token = '"'
-            while i < len(source_code) and source_code[i] != '"':
-                token += source_code[i]
-                i += 1
-            if i < len(source_code):
-                token += '"'
-                tokens.append((token, Line))
-                i += 1
-            else:
-                tokens.append((token, Line))
+            while i < len(source_code):
+                if source_code[i] == '"':
+                    token += source_code[i]
+                    i += 1
+                    break
+                elif source_code[i] == "\\" and i + 1 < len(source_code) and source_code[i + 1] == '"':
+                    token += '\\"'
+                    i += 2
+                else:
+                    token += source_code[i]
+                    i += 1
+            tokens.append((token, Line))
+
 
 
         elif char == ".":

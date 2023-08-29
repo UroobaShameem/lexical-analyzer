@@ -57,10 +57,11 @@ def isFloat(x):
     return None
 
 def isString(x):
-    String = re.match(r'\"[a-zA-Z0-9]*\"', x)
+    String = re.match(r'"(?:[^"\\]|\\.)*"', x)
     if String:
         return x
     return None
+
 
 def isOperator(x):
     pm = {"+", "-"}

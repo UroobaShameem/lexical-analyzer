@@ -1,9 +1,11 @@
-a='ca' // 
-void Class A_B_C :: 35 #comment abc
-Int a=b==++==6
-3.3 / 3.3
-3.3a.b /3.3a,.,b
-3.3.4 / 3.3 , .4
-.3a
-while (a<===b!!!=+-**55)
-{{c ="abc+=\"56" abc_d
+# a='ca' // 
+# void Class A_B_C :: 35 #comment abc
+# Int a=b==++==6
+# 3.3 / 3.3
+# 3.3a.b /3.3a,.,b
+# 3.3.4 / 3.3 , .4
+# .3a
+# while (a<===b!!!=+-**55)
+# {{c ="abc+=\"56" abc_d
+ 'a'
+ '\n' 'ab'
