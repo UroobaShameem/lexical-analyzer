@@ -77,10 +77,10 @@ def word_break(source_code):
 
         elif char == ".":
             # Handling dot as part of a number or a separate token
-            if i + 1 < len(source_code) and source_code[i + 1].isnumeric():
+            if i + 1 < len(source_code) and (source_code[i + 1].isdigit() or source_code[i + 1].isalpha()):
                 token = char
                 i += 1
-                while i < len(source_code) and (source_code[i].isdigit() or source_code[i] == "."):
+                while i < len(source_code) and (source_code[i].isdigit() or source_code[i] == "." or source_code[i].isalpha()):
                     token += source_code[i]
                     i += 1
                 tokens.append((token, Line))
