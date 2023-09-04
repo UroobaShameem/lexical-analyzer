@@ -21,7 +21,6 @@ def tokenize(source_code):
     # Loop through each source code word
     for word, Line_no in list.items():
 
-        # This will check if a token has datatype declaration
         if isID(word):
             if isKeyword(word):
                 classification = isKeyword(word)
@@ -41,12 +40,10 @@ def tokenize(source_code):
         elif isFloat(word):
             tokens.append(['Float', word, Line_no])
 
-        # This will look for an operator
         elif isOperator(word):
             classification = isOperator(word)
             tokens.append([classification, word, Line_no])
 
-        # This will look for integer items and cast them as a number
         elif isPunctuator(word):
             classification = isPunctuator(word)
             tokens.append([classification, word, Line_no])

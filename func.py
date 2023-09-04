@@ -33,9 +33,8 @@ def isKeyword(x):
         'override': 'override',
         'static': 'static',
     }
-    lower_x = x.lower()
-    if lower_x in keyword_list:
-        return keyword_list[lower_x]
+    if x in keyword_list:
+        return keyword_list[x]
     return None
 
 def isChar(x):

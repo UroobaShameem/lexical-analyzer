@@ -1,11 +1,12 @@
 # a='ca' // 
 # void Class A_B_C :: 35 #comment abc
-# Int a=b==++==6
+@@ Int a=b==++==6
 # 3.3 / 3.3
 # 3.3a.b /3.3a,.,b
- 3.3.4 / 3.3 , .4
- .3a @@ ghj
+# 3.3.4 / 3.3 , .4
+ .3a  ghj
  while (a<===b!!!=+-**55)
  {{c ="abc+=\"56" abc_d @@
-'a'
-'\n' 'ab' 
+'a' int
+# '\n' 'ab' 'a'
+'a' int
