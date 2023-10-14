@@ -8,5 +8,5 @@
  while (a<===b!!!=+-**55)
  {{c ="abc+=\"56" abc_d @@
 'a' int
-# '\n' 'ab' 'a'
+# '\n' 'ab'
 'a' int
