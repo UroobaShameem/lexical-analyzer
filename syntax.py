@@ -163,10 +163,7 @@ def initE(tokens,i):
             return i, logic
     return i, False
 
-
 def OE(tokens, i):
-    # Placeholder for handling expressions. You should implement expression parsing here.
-    # For now, let's assume that any token is a valid expression.
     if tokens[i] in ["self", "super", "ID", "(", "!", "int", "float", "TF", "char"]:
         i += 1
         return i, True  # Successfully parsed an expression
@@ -252,11 +249,24 @@ def F(tokens,i):
     return i, False
 
 def new(tokens,i):
-
+    if tokens[i] in ["=", ";"]: #<init>
+        i, logic = init(tokens,i)
+        return i, logic
+    
+    elif tokens[i] in ["[", "(", "{", "."]: #<lhp> <tdash> <edash>
+        i, logic = lhp(tokens, i)
+        if tokens[i] == "MDM":
+            i, logic = tdash(tokens, i)
+            if tokens[i] == "PM":
+                i, logic = edash(tokens, i)
+                return i, logic
     return i, False
 
 def TS(tokens,i):
-
+    if tokens[i] == "self" or tokens[i] == "super":  
+        i += 1
+        if tokens[i] == ".":  
+            i += 1
     return i, False
 
 def lhp(tokens,i):
