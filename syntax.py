@@ -251,6 +251,26 @@ def F(tokens,i):
         return i, logic
     return i, False
 
+def new(tokens,i):
+
+    return i, False
+
+def TS(tokens,i):
+
+    return i, False
+
+def lhp(tokens,i):
+
+    return i, False
+
+def class_def(tokens,i):
+
+    return i, False
+
+def fun_st(tokens,i):
+
+    return i, False
+
 def while_(tokens, i):
     if tokens[i] == "while":
         i += 1  # Move to the next token
