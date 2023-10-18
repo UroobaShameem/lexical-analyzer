@@ -9,17 +9,17 @@ def isID(x):
 def isKeyword(x):
     keyword_list = {
         'var': 'var',
-        'int': 'DataType',
-        'float': 'DataType',
-        'string': 'DataType',
-        'bool': 'DataType',
+        'int': 'DT',
+        'float': 'DT',
+        'string': 'DT',
+        'bool': 'DT',
         'true': 'TF',
         'false': 'TF',
         'if': 'if',
         'else': 'else',
         'while': 'while',
         'fun': 'fun',
-        'back': 'back',
+        'return': 'return',
         'class': 'class',
         'init': 'init',
         'self': 'self',
@@ -32,6 +32,7 @@ def isKeyword(x):
         'virtual': 'virtual',
         'override': 'override',
         'static': 'static',
+        'interface': 'interface'
     }
     if x in keyword_list:
         return keyword_list[x]
@@ -67,7 +68,7 @@ def isOperator(x):
     mdm = {"*", "/", "%"}
     inc_dec = {"++", "--"}
     assign = {"=", "+=", "-=", "*=", "/=", "%="}
-    logical = {"&", "|", "!"}
+    logical = {"&&", "||", "!"}
     relational = {"<", ">", "<=", ">=", "==", "!="}
 
     if x in pm:
@@ -81,7 +82,7 @@ def isOperator(x):
     elif x in logical:
         return "LOGICAL_OP"
     elif x in relational:
-        return "RELATIONAL_OP"
+        return "ROP"
     return None
 
 def isPunctuator(x):

@@ -6,7 +6,7 @@ def read_input():
     return source_code
 
 def write_output(output_tokens):
-    with open("output.txt", "w") as file:
+    with open("tokens.txt", "w") as file:
         for token in output_tokens:
             file.write(f"[{token[0]}, {token[1]}, {token[2]}]\n")
 

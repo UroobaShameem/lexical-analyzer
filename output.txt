@@ -1,2 +1,0 @@
-[Char, 'a', 12]
-[DataType, int, 12]

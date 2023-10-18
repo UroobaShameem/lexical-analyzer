@@ -29,16 +29,16 @@ def tokenize(source_code):
                 tokens.append(['ID', word, Line_no])
 
         elif isChar(word):
-            tokens.append(['Char', word, Line_no])
+            tokens.append(['char', word, Line_no])
         
         elif isString(word):
-            tokens.append(['String', word, Line_no])
+            tokens.append(['string', word, Line_no])
 
         elif isInt(word):
-            tokens.append(['Int', word, Line_no])
+            tokens.append(['int', word, Line_no])
 
         elif isFloat(word):
-            tokens.append(['Float', word, Line_no])
+            tokens.append(['float', word, Line_no])
 
         elif isOperator(word):
             classification = isOperator(word)
@@ -51,4 +51,6 @@ def tokenize(source_code):
         else:
             tokens.append(['Invalid Lexeme', word, Line_no])
     
+     # Add the end token
+    tokens.append(['$','$', Line_no])
     return tokens
