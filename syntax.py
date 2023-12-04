@@ -389,7 +389,6 @@ def assign_st(tokens, i):
         if tokens[i]['cp'] in ["self", "super", "int", "float", "char", "string", "(", "!", "ID"]:
             i, logic = asg(tokens, i)
             return i, logic
-    
     return i, False
 
 def assign_op(tokens, i):
@@ -855,7 +854,38 @@ def init2_dash(tokens, i):
 
 def body(tokens,i):
     print("body")
-    return i, True
+    if tokens[i]['cp'] == ";":
+        return i, True
+    
+    elif tokens[i]['cp'] in ["while", "return","if","ID"]:
+        i, logic = SST(tokens, i)
+        return i, logic
+    
+    elif tokens[i]['cp'] in ["static", "abstract", "fun", "DT"]:
+        i, logic = SST2(tokens, i)
+        return i, logic
+
+    elif tokens[i]['cp'] in ["while", "return","if","ID", "static","abstract","fun", "DT","}"]:
+        i, logic = MST(tokens, i)
+        return i, logic
+    
+    return i, False
+
+def MST(tokens,i):
+    print("mst")
+    if tokens[i]['cp'] in ["while", "return","if","ID"]:
+        i, logic = SST(tokens, i)
+        if tokens[i]['cp'] in ["while", "return","if","ID", "static","abstract","fun", "DT","}"]:
+            i, logic = MST(tokens, i)
+            return i, logic
+        
+    elif tokens[i]['cp'] in ["static", "abstract", "fun", "DT"]:
+        i, logic = SST2(tokens, i)
+        if tokens[i]['cp'] in ["while", "return","if","ID", "static","abstract","fun", "DT","}"]:
+            i, logic = MST(tokens, i)
+            return i, logic
+    
+    return i, False
 
 def last(tokens, i):
     return i, True
