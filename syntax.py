@@ -381,6 +381,36 @@ def lhp3(tokens,i):
     
     return i, False
 
+# VAR OBJ ASSIGNMENT
+def assign_st(tokens, i):
+    print("assign st")
+    if tokens[i]['cp'] in ["=", "ROP"]:
+        i, logic = assign_op(tokens, i)
+        if tokens[i]['cp'] in ["self", "super", "int", "float", "char", "string", "(", "!", "ID"]:
+            i, logic = asg(tokens, i)
+            return i, logic
+    
+    return i, False
+
+def assign_op(tokens, i):
+    print("assign op")
+    if tokens[i]['cp'] in ["=", "ROP"]:
+        i +=1
+    return i, False
+    
+def asg(tokens, i):
+    print("asg")
+    if tokens[i]['cp'] in ["self", "super", "int", "float", "char", "string", "(", "!", "ID"]:
+            i, logic = E(tokens, i)
+            if tokens[i]['cp'] == ";":
+                i +=1
+                return i, logic
+
+    elif tokens[i]['cp'] == "obj":  
+          i, logic = obj_call(tokens, i)
+          return i, logic
+    return i, False
+
 # CLASS
 def class_def(tokens,i):
     print("class def")
