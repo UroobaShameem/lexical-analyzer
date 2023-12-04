@@ -1,1 +1,3 @@
 while(a){;}
+class()
+int = [

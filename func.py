@@ -73,17 +73,17 @@ def isOperator(x):
     relational = {"<", ">", "<=", ">=", "==", "!="}
 
     if x in pm:
-        return "PM"
+        return "pm"
     elif x in mdm:
-        return "MDM"
+        return "mdm"
     elif x in inc_dec:
-        return "INC_DEC_OP"
+        return "inc_dec"
     elif x in assign:
-        return "ASSIGN_OP"
+        return "assign_op"
     elif x in logical:
-        return "LOGICAL_OP"
+        return "logical_op"
     elif x in relational:
-        return "ROP"
+        return "rop"
     return None
 
 def isPunctuator(x):

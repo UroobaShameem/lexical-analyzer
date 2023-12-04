@@ -25,5 +25,5 @@ second_item_vp = t[1]['vp']
 print("Value part of the second item:", second_item_vp)
 
 # Access the 'vp' (value part) of any specific item by its index
-specific_item_vp = t[3]['vp']  # Replace 3 with the desired index
+specific_item_vp = t[2]['cp']  # Replace 3 with the desired index
 print("Value part of the specified item:", specific_item_vp)
