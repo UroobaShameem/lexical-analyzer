@@ -531,6 +531,7 @@ def arr_dec(tokens,i):
             return i, False
         
 def dec2(tokens,i):
+    print("dec2")
     if tokens[i]['cp'] in [";", ",","="]:
         i, logic = init1(tokens, i)
         if tokens[i]['cp'] in [";", ","]:
@@ -548,6 +549,7 @@ def dec2(tokens,i):
     return i, False
 
 def init1(tokens, i):
+    print("init1")
     if tokens[i]['cp'] == "=":
         i +=1
         if tokens[i]['cp'] == "[":
@@ -560,6 +562,7 @@ def init1(tokens, i):
     return i, False
 
 def arr(tokens, i):
+    print("arr")
     if tokens[i]['cp'] == ";":
         i +=1
 
@@ -572,6 +575,60 @@ def arr(tokens, i):
                 return i, logic
     return i, False
 
+def init2(tokens, i):
+    print("init2")
+    if tokens[i]['cp'] == "=":
+        i +=1
+        if tokens[i]['cp'] == "[":
+            i +=1
+            if tokens[i]['cp'] in [";", ",","="]:
+                i, logic = init2d(tokens, i)
+                if tokens[i]['cp'] == "]":
+                    i +=1
+                    return i, logic
+    return i, False
+
+def exp(tokens, i):
+    print("exp")
+    if tokens[i]['cp'] in ["super", "self", "(", "!", "ID"]:
+        i, logic = E(tokens, i)
+        if tokens[i]['cp'] in [",", "]"]:
+            i, logic = exp1(tokens, i)
+            return i, logic
+    return i, False
+
+def exp1(tokens, i):
+    print("exp 1")
+    if tokens[i]['cp'] == ",":
+        i +=1
+        if tokens[i]['cp'] in ["super", "self", "(", "!", "ID"]:
+            i, logic = E(tokens, i)
+            if tokens[i]['cp'] in [",", "]"]:
+                i, logic = exp1(tokens, i)
+                return i, logic
+    return i, False
+
+def init2d(tokens, i):
+    print("init 2d")
+    if tokens[i]['cp'] == "[":
+        i +=1
+        if tokens[i]['cp'] in ["self", "super", "int", "float", "char", "string", "(", "!", "ID", "]"]:
+            i, logic = exp(tokens, i)
+            if tokens[i]['cp'] == "]":
+                i +=1
+                if tokens[i]['cp'] == ",":
+                    i, logic = init2_dash(tokens, i)
+                    return i, logic
+    return i, False
+
+def init2_dash(tokens, i):
+    print("init 2dash")
+    if tokens[i]['cp'] == ",":
+        i +=1
+        if tokens[i]['cp'] in [";", ",","="]:
+            i, logic = init2d(tokens, i)
+            return i, logic
+    return i, False
 
 def body(tokens,i):
     print("body")
