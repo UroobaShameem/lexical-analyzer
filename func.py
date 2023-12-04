@@ -33,6 +33,7 @@ def isKeyword(x):
         'virtual': 'virtual',
         'override': 'override',
         'static': 'static',
+        'abstract': 'abstract',
         'interface': 'interface',
         'implements': 'implements',
         'obj': 'obj'

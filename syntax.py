@@ -26,11 +26,11 @@ def S0(t, i):
 
 def S(t, i):
     print("s")
-    if (t[i]['cp'] in ["while", "if", "ID"]):
+    if t[i]['cp'] == "while":
         i, logic = while_(t, i)
         return i, logic
 
-    if (t[i]['cp'] in ["abstract", "static", "class", "DT", "fun"]):
+    if t[i]['cp'] in ["abstract", "static", "class", "DT", "fun"]:
         i, logic = S2(t, i)
         return i, logic
 
@@ -100,9 +100,25 @@ def fdec(tokens, i):
         i += 1  # Move to the next token
         if tokens[i]['cp'] == "ID":
             i += 1  # Move to the next token
-            if tokens[i]['cp'] in ["=", ";"]:
-                i, logic = init(tokens, i)
+            if tokens[i]['cp'] in ["=", ";", ",", "{", "["]:
+                i, logic = declaration(tokens, i)
                 return i, logic
+    return i, False
+
+def declaration(tokens, i):
+    print("declaration")
+    if tokens[i]['cp'] in ["=", ";", ","]:
+        i, logic = dec(tokens, i)
+        return i, logic
+    
+    elif tokens[i]['cp'] == "[":
+        i, logic = arr_dec(tokens, i)
+        return i, logic
+    
+    elif tokens[i]['cp'] == "{":
+        i, logic = dict_(tokens, i)
+        return i, logic
+    
     return i, False
 
 def snew(tokens, i):
@@ -117,15 +133,42 @@ def snew(tokens, i):
 
     return i, False
 
+#VARIABLE DECLARATION
+
+def dec(tokens, i):
+    print("dec")
+    if tokens[i]['cp'] in ["=", ";"]:  
+        i, logic = init(tokens, i)
+        if tokens[i]['cp'] in [",", ";"]:  
+            i, logic = lst(tokens, i)
+            return i, logic
+    return i, False
+
+def lst(tokens, i):
+    print("lst")
+    if tokens[i]['cp'] == ";":  
+        i +=1
+    
+    elif tokens[i]['cp'] == ",":
+       i +=1
+       if tokens[i]['cp'] == "ID":  
+        i +=1
+        if tokens[i]['cp'] in ["=", ";"]:  
+            i, logic = init(tokens, i)
+            if tokens[i]['cp'] in [",", ";"]:  
+                i, logic = lst(tokens, i)
+                return i, logic
+    return i, False
+
 def init(tokens, i):
     print("init")
-    if tokens[i]['cp'] in ["=", ";"]:
+    if tokens[i]['cp'] in ["=", ";", ","]:
         i, logic = initE(tokens, i)
         return i, logic
     return i, False
 
 def initE(tokens, i): 
-    if tokens[i]['cp'] == "ID":  # ID <new>
+    if tokens[i]['cp'] == "ID":  
         i, logic = new(tokens, i)
         return i, logic
     
@@ -556,12 +599,78 @@ def A1(tokens, i):
     return i, False
 
 def SST(tokens, i):
+    print("sst")
     if tokens[i]['cp'] == ";":
         i += 1  
         return i, True  
-    else:
-        return i, False  
+    elif tokens[i]['cp'] == "while":
+            i, logic = while_(tokens, i)
+            return i, logic
     
+    elif tokens[i]['cp'] == "return":
+            i, logic = return_(tokens, i)
+            return i, logic
+    
+    elif tokens[i]['cp'] in ["self", "super", "ID"]:
+            i, logic = create(tokens, i)
+            if tokens[i]['cp'] == "ID":
+                i +=1
+                if tokens[i]['cp'] in ["[", "(", "{", "."]:
+                    i, logic = lhp(tokens, i)
+            return i, logic
+    return i, False  
+
+def create(tokens, i):
+    print("create")
+    if tokens[i]['cp'] in ["self", "super"]:
+        i, logic = TS(tokens, i)
+        if tokens[i]['cp'] == "ID":
+            i +=1
+            if tokens[i]['cp'] == "=":
+                i +=1
+                if tokens[i]['cp'] == "ID":
+                    i +=1
+                    if tokens[i]['cp'] == ";":
+                        i +=1
+                        return i, logic
+    return i, False
+
+def SST2(tokens, i):
+    print("sst 2")
+    if tokens[i]['cp'] in ["static", "abstract", "fun","DT"]:
+        i, logic = static(tokens, i)
+        if tokens[i]['cp'] in ["abstract", "fun","DT"]:
+            i, logic = SST3(tokens, i)
+            return i, logic
+    return i, False
+
+def static(tokens, i):
+    print("static")
+    if tokens[i]['cp'] == "static":
+        i +=1
+        return i, True
+    return i, False
+
+def abstract(tokens, i):
+    print("abstract")
+    if tokens[i]['cp'] == "abstract":
+        i +=1
+        return i, True
+    return i, False
+
+def SST3(tokens, i):
+    print("sst 3")
+    if tokens[i]['cp'] in ["abstract", "fun"]:
+        i, logic = abstract(tokens, i)
+        if tokens[i]['cp'] == "fun":
+            i, logic = fun_st(tokens, i)
+            return i, logic
+
+    elif tokens[i]['cp'] == "DT":
+        i, logic = fdec(tokens, i)
+        return i, logic
+    return i, False
+
 # DICTIONARY
 def dict_(tokens,i):
     if tokens[i]['cp'] == "{":
