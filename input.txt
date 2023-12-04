@@ -1,1 +1,1 @@
-while(a){int ab;}
+while(a){;}

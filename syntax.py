@@ -1,4 +1,4 @@
-# Define an empty array to store the class parts
+# Define an empty array to store the class parts and values
 t = []
 
 # Open the tokens.txt file for reading
@@ -7,12 +7,14 @@ with open('tokens.txt', 'r') as file:
     for line in file:
         # Split each line into parts using a comma as the separator
         parts = line.strip().split(', ')
-        if len(parts) >= 1:
+        if len(parts) >= 3:  # Make sure there are at least three parts
             # Remove the opening square bracket "[" from the first part
             class_part = parts[0].lstrip('[')
-            # Add the cleaned "class part" to the class_parts array
-            t.append(class_part)
-
+            # Get the second and third parts as value_part and line
+            value_part = parts[1]
+            line_part = parts[2]
+            # Append the class part, value part, and line to the array
+            t.append({'cp': class_part, 'vp': value_part, 'line': line_part})
 
 def S0(tokens, i):
     if (tokens[i] in ["while", "if", "static", "DT", "fun", "ID", "class"]):
@@ -278,7 +280,67 @@ def class_def(tokens,i):
     return i, False
 
 def fun_st(tokens,i):
+    if tokens[i] == "fun":  
+        i += 1
+        if tokens[i] == "ID":  
+            i += 1
+            if tokens[i] == "(":  
+                i += 1
+                if tokens[i] == "DT":
+                    i, logic = parameter(tokens, i)
+                    if tokens[i] == ")":  
+                        i += 1
+                        if tokens[i] == "{":  
+                            i += 1
+                            if tokens[i] in ["while", "back", "if", "ID"]: 
+                                i, logic = MST(tokens, i)
+                                if tokens[i] == "}":  
+                                    i += 1
+                return i, logic
+    return i, False
 
+def parameter(tokens, i):
+    if tokens[i] == "DT":  
+        i += 1
+        if tokens[i] == "ID":  
+            i += 1
+            if tokens[i] in ["=", "[", ",", ")"]: 
+                i, logic = p0(tokens, i)
+                if tokens[i] in [",", ")"]: 
+                    i, logic = p1(tokens, i)
+                return i, logic
+    return i, False
+
+def p0(tokens, i):
+    if tokens[i] == "=":  
+        i += 1
+        if tokens[i] in ["self", "super","int", "float", "char","string","(", "!", "ID"]: 
+            i, logic = E(tokens,i)
+            if tokens[i] in [",", ")"]: 
+                i, logic = p1(tokens, i)
+                return i, logic
+            
+    elif tokens[i] == "[":  
+        i, logic = arr_dec(tokens, i)
+        return i, logic
+    return i, False
+
+def p1(tokens, i):
+    if tokens[i] == ",":  
+        i += 1
+        if tokens[i] == "DT":
+            i, logic = parameter(tokens, i)
+            return i, logic
+    return i, False
+
+def back_st(tokens, i):
+    if tokens[i] == "back":  
+        i += 1
+        if tokens[i] in ["self", "super", "ID", "(", "!", "int", "float", "TF", "char"]:
+            i, logic = OE(tokens, i)
+            if tokens[i] == ";":  
+                i += 1
+                return i, logic
     return i, False
 
 def while_(tokens, i):

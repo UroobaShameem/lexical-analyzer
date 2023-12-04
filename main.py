@@ -1,5 +1,6 @@
 from word_break import word_break
 from tokenization import tokenize
+
 def read_input():
     with open("input.txt", "r") as source_file:
         source_code = source_file.read()

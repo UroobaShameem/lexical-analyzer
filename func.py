@@ -12,6 +12,7 @@ def isKeyword(x):
         'int': 'DT',
         'float': 'DT',
         'string': 'DT',
+        'char': 'DT',
         'bool': 'DT',
         'true': 'TF',
         'false': 'TF',
