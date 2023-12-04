@@ -33,7 +33,9 @@ def isKeyword(x):
         'virtual': 'virtual',
         'override': 'override',
         'static': 'static',
-        'interface': 'interface'
+        'interface': 'interface',
+        'implements': 'implements',
+        'obj': 'obj'
     }
     if x in keyword_list:
         return keyword_list[x]

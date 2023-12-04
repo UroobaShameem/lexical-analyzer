@@ -172,6 +172,7 @@ def initE(tokens, i):
     
     return i, False
 
+# EXPRESSION
 def OE(tokens, i):
     print("oe")
     if tokens[i]['cp'] in ["self", "super", "ID", "(", "!", "int", "float", "TF", "char"]:
@@ -337,10 +338,91 @@ def lhp3(tokens,i):
     
     return i, False
 
+# CLASS
 def class_def(tokens,i):
+    print("class def")
+    if tokens[i]['cp'] == "class":
+        i +=1
+        if tokens[i]['cp'] == "ID":
+            i +=1
+            if tokens[i]['cp'] in [":", "{"]:
+                i, logic = inherit(tokens, i)
+                if tokens[i]['cp'] == "{":
+                    i +=1
+                    if tokens[i]['cp'] in ["static", "abstract", "fun", "DT","}"]:
+                        i, logic = class_body(tokens, i)
+                        if tokens[i]['cp'] == "}":
+                            i +=1
+                            return i, logic
+    return i, False
+
+def inherit(tokens,i):
+    print("inherit")
+    if tokens[i]['cp'] == ":":
+        i +=1
+        if tokens[i]['cp'] == "ID":
+            i +=1
+    
+    elif tokens[i]['cp'] == "implements":  
+            i += 1
+    
+    return i, False
+
+def class_body(tokens,i):
+    print("class body")
+    if tokens[i]['cp'] in ["static", "abstract", "fun", "DT"]:
+        i, logic = SST2(tokens, i)
+        if tokens[i]['cp'] in ["static", "abstract", "fun", "DT","}"]:
+            i, logic = class_body(tokens, i)
+            return i, logic
 
     return i, False
 
+def obj_call(tokens,i):
+    print("obj call")
+    if tokens[i]['cp'] == "obj":
+        i +=1
+        if tokens[i]['cp'] == "ID":
+            i +=1
+            if tokens[i]['cp'] == "(":
+                i +=1
+                if tokens[i]['cp'] in ["self", "super", "ID", "(", "!", ")"]:
+                    i, logic = argument(tokens, i)
+                    if tokens[i]['cp'] == ")":
+                        i +=1
+                        if tokens[i]['cp'] == ";":
+                            i +=1
+                            return i, logic
+
+    return i, False
+
+def interface(tokens,i):
+    print("interface")
+    if tokens[i]['cp'] == "interface":  
+        i += 1
+        if tokens[i]['cp'] == "ID":  
+            i += 1
+            if tokens[i]['cp'] == "{":  
+                i += 1
+                if tokens[i]['cp'] in ["static", "abstract", "fun", "DT","}"]:
+                    i, logic = interface_body(tokens, i)
+                    if tokens[i]['cp'] == "}":  
+                        i += 1
+                        return i, logic
+
+    return i, False
+
+def interface_body(tokens,i):
+    print("interface body")
+    if tokens[i]['cp'] in ["static", "abstract", "fun", "DT"]:
+        i, logic = SST2(tokens, i)
+        if tokens[i]['cp'] in ["static", "abstract", "fun", "DT","}"]:
+            i, logic = interface_body(tokens, i)
+            return i, logic
+
+    return i, False
+
+# FUNCTION
 def fun_st(tokens, i):
     print("fun st")
     if tokens[i]['cp'] == "fun":  
@@ -355,7 +437,7 @@ def fun_st(tokens, i):
                         i += 1
                         if tokens[i]['cp'] == "{":  
                             i += 1
-                            if tokens[i]['cp'] in ["while", "back", "if", "ID"]: 
+                            if tokens[i]['cp'] in ["while", "return", "if", "ID"]: 
                                 i, logic = MST(tokens, i)
                                 if tokens[i]['cp'] == "}":  
                                     i += 1
@@ -396,8 +478,8 @@ def p1(tokens, i):
             return i, logic
     return i, False
 
-def back_st(tokens, i):
-    if tokens[i]['cp'] == "back":  
+def return_(tokens, i):
+    if tokens[i]['cp'] == "return":  
         i += 1
         if tokens[i]['cp'] in ["self", "super", "ID", "(", "!", "int", "float", "TF", "char"]:
             i, logic = OE(tokens, i)
@@ -480,6 +562,7 @@ def SST(tokens, i):
     else:
         return i, False  
     
+# DICTIONARY
 def dict_(tokens,i):
     if tokens[i]['cp'] == "{":
         i +=1
@@ -519,6 +602,7 @@ def KV(tokens, i):
         return i, logic
     return i, False
 
+# ARRAY 2D
 def arr_dec(tokens,i):
     print("arr_dec")
     if tokens[i]['cp'] == "[":
