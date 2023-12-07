@@ -16,50 +16,56 @@ with open('tokens.txt', 'r') as file:
             # Append the class part, value part, and line to the array
             t.append({'cp': class_part, 'vp': value_part, 'line': line_part})
 
-def S0(t, i):
+def S0(tokens, i):
     print("s0")
-    if (t[i]['cp'] in ["while", "if", "static", "DT", "fun", "ID", "class"]):
-        i, logic = S(t, i)
+    if tokens[i]['cp'] in ["while", "if", "static", "DT", "fun", "ID", "class","$"]:
+        i, logic = S(tokens, i)
         return i, logic
 
     return i, False
 
-def S(t, i):
+def S(tokens, i):
     print("s")
-    if t[i]['cp'] == "while":
-        i, logic = while_(t, i)
-        return i, logic
-
-    if t[i]['cp'] in ["abstract", "static", "class", "DT", "fun"]:
-        i, logic = S2(t, i)
-        return i, logic
-
-    return i, False
-
-def S2(t, i):
-    print("s2")
-    if t[i]['cp'] == "abstract":
-        i += 1 
-        if (t[i]['cp'] in ["class", "fun"]):
-            i, logic = anew(t, i)
+    if tokens[i]['cp'] in ["while", "return","if","ID"]:
+        i, logic = SST(tokens, i)
+        if tokens[i]['cp'] in ["DT","fun","abstract","class"]:
+            i, logic = S(tokens, i)
             return i, logic
 
-    elif t[i]['cp'] == "class":
-        i, logic = class_def(t, i)
-        return i, logic
-
-    elif t[i]['cp'] == "DT":
-        i, logic = fdec(t, i)
-        return i, logic
-
-    elif t[i]['cp'] == "fun":
-        i, logic = fun_st(t, i)
+    if tokens[i]['cp'] in ["abstract", "static", "class", "DT", "fun"]:
+        i, logic = S2(tokens, i)
         return i, logic
     
-    elif t[i]['cp'] == "static":
+    if tokens[i]['cp'] == "$":
+        i, logic = last(tokens, i)
+        return i, logic
+
+    return i, False
+
+def S2(tokens, i):
+    print("s2")
+    if tokens[i]['cp'] == "abstract":
+        i += 1 
+        if tokens[i]['cp'] in ["class", "fun"]:
+            i, logic = anew(tokens, i)
+            return i, logic
+
+    elif tokens[i]['cp'] == "class":
+        i, logic = class_def(tokens, i)
+        return i, logic
+
+    elif tokens[i]['cp'] == "DT":
+        i, logic = fdec(tokens, i)
+        return i, logic
+
+    elif tokens[i]['cp'] == "fun":
+        i, logic = fun_st(tokens, i)
+        return i, logic
+    
+    elif tokens[i]['cp'] == "static":
         i += 1  # Move to the next token
-        if t[i]['cp'] == "fun":
-            i, logic = snew(t, i)
+        if tokens[i]['cp'] == "fun":
+            i, logic = snew(tokens, i)
             return i, logic
 
     return i, False
@@ -100,14 +106,15 @@ def fdec(tokens, i):
         i += 1  # Move to the next token
         if tokens[i]['cp'] == "ID":
             i += 1  # Move to the next token
-            if tokens[i]['cp'] in ["=", ";", ",", "{", "["]:
+            if tokens[i]['cp'] in ["ASSIGN_OP", ";", ",", "{", "["]:
+                print("x")
                 i, logic = declaration(tokens, i)
                 return i, logic
     return i, False
 
 def declaration(tokens, i):
     print("declaration")
-    if tokens[i]['cp'] in ["=", ";", ","]:
+    if tokens[i]['cp'] in ["ASSIGN_OP", ";", ","]:
         i, logic = dec(tokens, i)
         return i, logic
     
@@ -137,37 +144,43 @@ def snew(tokens, i):
 
 def dec(tokens, i):
     print("dec")
-    if tokens[i]['cp'] in ["=", ";"]:  
+    if tokens[i]['cp'] in ["ASSIGN_OP", ";",","]:  
         i, logic = init(tokens, i)
-        if tokens[i]['cp'] in [",", ";"]:  
-            i, logic = lst(tokens, i)
-            return i, logic
+        return i, logic
     return i, False
 
 def lst(tokens, i):
     print("lst")
     if tokens[i]['cp'] == ";":  
         i +=1
+        i, logic = last(tokens, i)
+        return i, logic
     
     elif tokens[i]['cp'] == ",":
        i +=1
        if tokens[i]['cp'] == "ID":  
-        i +=1
-        if tokens[i]['cp'] in ["=", ";"]:  
-            i, logic = init(tokens, i)
-            if tokens[i]['cp'] in [",", ";"]:  
-                i, logic = lst(tokens, i)
+            i +=1
+            if tokens[i]['cp'] in ["ASSIGN_OP", ";",","]:  
+                i, logic = init(tokens, i)
                 return i, logic
     return i, False
 
 def init(tokens, i):
     print("init")
-    if tokens[i]['cp'] in ["=", ";", ","]:
-        i, logic = initE(tokens, i)
+    if tokens[i]['cp'] == "ASSIGN_OP":
+        i+=1 
+        if tokens[i]['cp'] in ["self", "super", "int", "float", "char", "string", "(", "!", "ID"]:
+            i, logic = initE(tokens, i)
+            return i, logic
+        
+    elif tokens[i]['cp'] in [",", ";"]:  
+        i, logic = lst(tokens, i)
         return i, logic
     return i, False
 
+
 def initE(tokens, i): 
+    print("init e")
     if tokens[i]['cp'] == "ID":  
         i, logic = new(tokens, i)
         return i, logic
@@ -182,14 +195,15 @@ def initE(tokens, i):
                     i, logic = tdash(tokens, i)
                     if tokens[i]['cp'] == "PM":
                         i, logic = edash(tokens, i)
-        return i, logic
+                        return i, logic
     
-    elif tokens[i]['cp'] in ["int", "float", "char", "string"]:  # <const> <tdash> <edash>
+    elif tokens[i]['cp'] in ["int", "float", "char", "string"]: 
+        i +=1
         if tokens[i]['cp'] == "MDM":
             i, logic = tdash(tokens, i)
             if tokens[i]['cp'] == "PM":
                 i, logic = edash(tokens, i)
-        return i, logic
+                return i, logic
     
     elif tokens[i]['cp'] == "!":  # !<F> <TDASH> <EDASH>
         i += 1
@@ -199,7 +213,7 @@ def initE(tokens, i):
                 i, logic = tdash(tokens, i)
                 if tokens[i]['cp'] == "PM":
                     i, logic = edash(tokens, i)
-        return i, logic
+                    return i, logic
     
     elif tokens[i]['cp'] == "(":  # (<E>) <TDASH> <EDASH> 
         i += 1
@@ -211,14 +225,14 @@ def initE(tokens, i):
                     i, logic = tdash(tokens, i)
                     if tokens[i]['cp'] == "PM":
                         i, logic = edash(tokens, i)
-        return i, logic
-    
+                    return i, logic
+                
     return i, False
 
 # EXPRESSION
 def OE(tokens, i):
     print("oe")
-    if tokens[i]['cp'] in ["self", "super", "ID", "(", "!", "int", "float", "TF", "char"]:
+    if tokens[i]['cp'] in ["self", "super", "ID", "(", "!", "int", "float", "TF", "char", ")", "}","LOGICAL_OP", "$"]:
         i, logic = AE(tokens, i)
         return i, logic  
 
@@ -251,7 +265,7 @@ def redash(tokens, i):
 def edash(tokens, i):
     if tokens[i]['cp'] == "PM":
         i += 1
-        if tokens[i]['cp'] in ["self", "super", "int", "float", "char", "string", "(", "!", "ID"]:
+        if tokens[i]['cp'] in ["self", "super", "int", "float", "char", "string", "(", "!", "ID", "ROP"]:
             i, logic = T(tokens, i)
             return i, logic
     return i, False
@@ -259,7 +273,7 @@ def edash(tokens, i):
 def tdash(tokens, i):
     if tokens[i]['cp'] == "MDM":
         i += 1
-        if tokens[i]['cp'] in ["self", "super", "int", "float", "char", "string", "(", "!", "ID"]:
+        if tokens[i]['cp'] in ["self", "super", "int", "float", "char", "string", "(", "!", "ID","ROP","PM","MDM"]:
             i, logic = F(tokens, i)
             return i, logic
     return i, False
@@ -284,7 +298,7 @@ def RE(tokens, i):
 
 def E(tokens, i):
     print("e")
-    if tokens[i]['cp'] in ["self", "super", "int", "float", "char", "string", "(", "!", "ID"]:
+    if tokens[i]['cp'] in ["self", "super", "int", "float", "char", "string", "(", "!", "ID", "ROP"]:
         i, logic = T(tokens, i)
         if tokens[i]['cp'] == "PM":
             i, logic = edash(tokens, i)
@@ -293,7 +307,7 @@ def E(tokens, i):
 
 def T(tokens, i):
     print("t")
-    if tokens[i]['cp'] in ["self", "super", "int", "float", "char", "string", "(", "!", "ID"]:
+    if tokens[i]['cp'] in ["self", "super", "int", "float", "char", "string", "(", "!", "ID", "ROP","PM"]:
         i, logic = F(tokens, i)
         if tokens[i]['cp'] == "MDM":
             i, logic = tdash(tokens, i)
@@ -302,19 +316,19 @@ def T(tokens, i):
 
 def F(tokens, i):
     print("f")
-    if tokens[i]['cp'] in ["self", "super"]: #"int", "float", "char", "string", "(", "!", "ID"]:
+    if tokens[i]['cp'] in ["self", "super""int", "float", "char", "string", "(", "!", "ID", "ROP", "PM", "MDM"]:
         i, logic = TS(tokens, i)
     if tokens[i]['cp'] == "ID":
         print("f id")
         i +=1
-        if tokens[i]['cp'] in ["{", "[", "(",".", "=", "ASSIGN_OP","inc_dec", "MDM", "PM",
+        if tokens[i]['cp'] in ["{", "[", "(",".", "ASSIGN_OP","inc_dec", "MDM", "PM",
                                 "ROP","LOGICAL_OP", ",",";",")", "}", "]"]:
             i, logic = lhp(tokens, i)
             return i, logic
     return i, False
 
 def new(tokens, i):
-    if tokens[i]['cp'] in ["=", ";"]:  # <init>
+    if tokens[i]['cp'] in ["ASSIGN_OP", ";"]:  # <init>
         i, logic = init(tokens, i)
         return i, logic
 
@@ -336,6 +350,7 @@ def TS(tokens, i):
     return i, False
 
 def lhp(tokens,i):
+    print("lhp")
     if tokens[i]['cp'] == "[":
         i, logic = array(tokens, i)
         return i, logic
@@ -345,9 +360,9 @@ def lhp(tokens,i):
         i, logic = argument(tokens, i)
         if tokens[i]['cp'] == ")":
             i +=1
-            if tokens[i]['cp'] in ["=", "ROP", 
+            if tokens[i]['cp'] in ["ASSIGN_OP", "ROP", 
                                 "INC_DEC_OP", "MDM", "PM", "LOGICAL_OP",
-                                ",", ";", ")", "}","]"]:
+                                ",",  ")", "}","]"]:
                 i, logic = lhp3(tokens, i)
             return i, logic
     
@@ -358,7 +373,11 @@ def lhp(tokens,i):
     elif tokens[i]['cp'] == ".":
         i, logic = lhp1(tokens, i)
         return i, logic
-
+    
+    elif tokens[i]['cp'] == ";":
+        i, logic = last(tokens, i)
+        return i, logic
+    
     return i, False
 
 def lhp1(tokens,i):
@@ -366,7 +385,7 @@ def lhp1(tokens,i):
         i +=1
         if tokens[i]['cp'] == "ID":
             i +=1
-            if tokens[i]['cp'] in ["{", "[", "(", ".", "=", "ROP", 
+            if tokens[i]['cp'] in ["{", "[", "(", ".", "ASSIGN_OP", "ROP", 
                                 "INC_DEC_OP", "MDM", "PM", "LOGICAL_OP",
                                 ",", ";", ")", "}","]"]:
                 i, logic = lhp(tokens, i)
@@ -384,16 +403,18 @@ def lhp3(tokens,i):
 # VAR OBJ ASSIGNMENT
 def assign_st(tokens, i):
     print("assign st")
-    if tokens[i]['cp'] in ["=", "ROP"]:
-        i, logic = assign_op(tokens, i)
-        if tokens[i]['cp'] in ["self", "super", "int", "float", "char", "string", "(", "!", "ID"]:
-            i, logic = asg(tokens, i)
-            return i, logic
+    if tokens[i]['cp'] == "ID":
+        if tokens[i]['cp'] in ["ASSIGN_OP", "ROP"]:
+            i, logic = assign_op(tokens, i)
+            if tokens[i]['cp'] in ["self", "super", "int", "float", "char", "string", "(", "!", "ID"]:
+                i, logic = asg(tokens, i)
+                return i, logic
     return i, False
+
 
 def assign_op(tokens, i):
     print("assign op")
-    if tokens[i]['cp'] in ["=", "ROP"]:
+    if tokens[i]['cp'] in ["ASSIGN_OP", "ROP"]:
         i +=1
     return i, False
     
@@ -446,6 +467,10 @@ def class_body(tokens,i):
         i, logic = SST2(tokens, i)
         if tokens[i]['cp'] in ["static", "abstract", "fun", "DT","}"]:
             i, logic = class_body(tokens, i)
+            return i, logic
+        
+    elif tokens[i]['cp'] == "}":
+            i, logic = last(tokens,i)
             return i, logic
 
     return i, False
@@ -509,9 +534,9 @@ def fun_st(tokens, i):
                         i += 1
                         if tokens[i]['cp'] == "{":  
                             i += 1
-                            if tokens[i]['cp'] in ["while", "return", "if", "ID"]: 
+                            if tokens[i]['cp'] in ["while", "return", "if", "ID","DT"]: 
                                 i, logic = MST(tokens, i)
-                                if tokens[i]['cp'] == "}":  
+                                if tokens[i]['cp'] == "}":
                                     i += 1
                 return i, logic
     return i, False
@@ -521,7 +546,7 @@ def parameter(tokens, i):
         i += 1
         if tokens[i]['cp'] == "ID":  
             i += 1
-            if tokens[i]['cp'] in ["=", "[", ",", ")"]: 
+            if tokens[i]['cp'] in ["ASSIGN_OP", "[", ",", ")"]: 
                 i, logic = p0(tokens, i)
                 if tokens[i]['cp'] in [",", ")"]: 
                     i, logic = p1(tokens, i)
@@ -631,22 +656,31 @@ def SST(tokens, i):
     print("sst")
     if tokens[i]['cp'] == ";":
         i += 1  
-        return i, True  
+     
     elif tokens[i]['cp'] == "while":
-            i, logic = while_(tokens, i)
-            return i, logic
+        i, logic = while_(tokens, i)
+        return i, logic
     
     elif tokens[i]['cp'] == "return":
-            i, logic = return_(tokens, i)
-            return i, logic
+        i, logic = return_(tokens, i)
+        return i, logic
     
-    elif tokens[i]['cp'] in ["self", "super", "ID"]:
-            i, logic = create(tokens, i)
-            if tokens[i]['cp'] == "ID":
-                i +=1
-                if tokens[i]['cp'] in ["[", "(", "{", "."]:
-                    i, logic = lhp(tokens, i)
-            return i, logic
+    elif tokens[i]['cp'] in ["self", "super"]:
+        i, logic = create(tokens, i)
+        return i, logic
+    
+    elif tokens[i]['cp'] == "DT":
+        i, logic = fdec(tokens, i)
+        return i, logic
+    
+    elif tokens[i]['cp'] == "ID":
+        i +=1
+        i, logic = initE(tokens, i)
+        return i, logic
+    
+    elif tokens[i]['cp'] in ["int", "float","char","bool"]:
+        i +=1
+    
     return i, False  
 
 def create(tokens, i):
@@ -655,14 +689,15 @@ def create(tokens, i):
         i, logic = TS(tokens, i)
         if tokens[i]['cp'] == "ID":
             i +=1
-            if tokens[i]['cp'] == "=":
+            if tokens[i]['cp'] == "ASSIGN_OP":
                 i +=1
                 if tokens[i]['cp'] == "ID":
                     i +=1
                     if tokens[i]['cp'] == ";":
                         i +=1
                         return i, logic
-    return i, False
+    else:
+        return i, False
 
 def SST2(tokens, i):
     print("sst 2")
@@ -712,15 +747,9 @@ def dict_(tokens,i):
     return i, False
 
 def KVlist(tokens, i):
-    if tokens[i]['cp'] == "ID":
-            i, logic = KVpair(tokens, i)
-            if tokens[i]['cp'] == "ID":
-                i, logic = KVpair(tokens, i)
-                return i, logic
-            else:
-                return i, logic
-
-    return i, False  
+    while tokens[i]['cp'] == "ID":
+        i, logic = KVpair(tokens, i)
+    return i, logic 
 
 def KVpair(tokens, i):
     print("kv pair")
@@ -747,14 +776,14 @@ def arr_dec(tokens,i):
         i +=1
         if tokens[i]['cp'] == "]":
             i +=1
-            if tokens[i]['cp'] in [";", ",","=","["]:
+            if tokens[i]['cp'] in [";", ",","ASSIGN_OP","["]:
                 i, logic = dec2(tokens, i)
                 return i, logic
             return i, False
         
 def dec2(tokens,i):
     print("dec2")
-    if tokens[i]['cp'] in [";", ",","="]:
+    if tokens[i]['cp'] in [";", ",","ASSIGN_OP"]:
         i, logic = init1(tokens, i)
         if tokens[i]['cp'] in [";", ","]:
             i, logic = arr(tokens, i)
@@ -764,7 +793,7 @@ def dec2(tokens,i):
         i +=1
         if tokens[i]['cp'] == "]":
             i +=1
-            if tokens[i]['cp'] in [";", ",","="]:
+            if tokens[i]['cp'] in [";", ",","ASSIGN_OP"]:
                 i, logic = init2(tokens, i)
                 if tokens[i]['cp'] in [";", ","]:
                     i, logic = arr(tokens, i)
@@ -799,11 +828,11 @@ def arr(tokens, i):
 
 def init2(tokens, i):
     print("init2")
-    if tokens[i]['cp'] == "=":
+    if tokens[i]['cp'] == "ASSIGN_OP":
         i +=1
         if tokens[i]['cp'] == "[":
             i +=1
-            if tokens[i]['cp'] in [";", ",","="]:
+            if tokens[i]['cp'] in [";", ",","ASSIGN_OP"]:
                 i, logic = init2d(tokens, i)
                 if tokens[i]['cp'] == "]":
                     i +=1
@@ -847,17 +876,15 @@ def init2_dash(tokens, i):
     print("init 2dash")
     if tokens[i]['cp'] == ",":
         i +=1
-        if tokens[i]['cp'] in [";", ",","="]:
+        if tokens[i]['cp'] in [";", ",","ASSIGN_OP"]:
             i, logic = init2d(tokens, i)
             return i, logic
     return i, False
 
 def body(tokens,i):
     print("body")
-    if tokens[i]['cp'] == ";":
-        return i, True
     
-    elif tokens[i]['cp'] in ["while", "return","if","ID"]:
+    if tokens[i]['cp'] in ["while", "return","if","ID"]:
         i, logic = SST(tokens, i)
         return i, logic
     
@@ -875,16 +902,19 @@ def MST(tokens,i):
     print("mst")
     if tokens[i]['cp'] in ["while", "return","if","ID"]:
         i, logic = SST(tokens, i)
-        if tokens[i]['cp'] in ["while", "return","if","ID", "static","abstract","fun", "DT","}"]:
+        if tokens[i]['cp'] in ["while", "return","if", "static","abstract","fun", "DT","}"]:
             i, logic = MST(tokens, i)
             return i, logic
         
-    elif tokens[i]['cp'] in ["static", "abstract", "fun", "DT"]:
-        i, logic = SST2(tokens, i)
-        if tokens[i]['cp'] in ["while", "return","if","ID", "static","abstract","fun", "DT","}"]:
-            i, logic = MST(tokens, i)
+    elif tokens[i]['cp'] in ["while", "return","if","ID", "static","abstract","fun", "DT","}"]:
+            i, logic = SST2(tokens, i)
             return i, logic
-    
+    elif tokens[i]['cp'] == ";":  
+        i +=1
+        i, logic = last(tokens, i)
+        return i, logic
+    else: 
+        pass
     return i, False
 
 def last(tokens, i):

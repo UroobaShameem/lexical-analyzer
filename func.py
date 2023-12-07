@@ -36,7 +36,7 @@ def isKeyword(x):
         'abstract': 'abstract',
         'interface': 'interface',
         'implements': 'implements',
-        'obj': 'obj'
+        'obj': 'obj',
     }
     if x in keyword_list:
         return keyword_list[x]
@@ -71,7 +71,7 @@ def isOperator(x):
     pm = {"+", "-"}
     mdm = {"*", "/", "%"}
     inc_dec = {"++", "--"}
-    assign = {"=", "+=", "-=", "*=", "/=", "%="}
+    assign = { "=","+=", "-=", "*=", "/=", "%="}
     logical = {"&&", "||", "!"}
     relational = {"<", ">", "<=", ">=", "==", "!="}
 
